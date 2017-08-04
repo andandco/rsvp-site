@@ -10,4 +10,4 @@
               <h3>#{eventName event}
               $maybe descript <- eventDescription event
                 <h3>#{descript}
-              <img src="static/upload/#{eventAsset_id event}" height="250" width="250">
+              <img src="#{presign $ eventAsset_id event}" height="250" width="250">

@@ -17,7 +17,7 @@
 
             <div .col-sm-3>
               <a  href="@{EventR eventId}" .event-image>
-                <img src="./static/upload/#{eventAsset_id event}" height="250" width="250">
+                <img src="#{presign $ eventAsset_id event}" height="250" width="250">
             <div .col-sm-6>
               <div .event-info>
                 <h2>#{eventName event}

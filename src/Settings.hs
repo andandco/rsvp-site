@@ -13,6 +13,7 @@ import Network.Wai.Handler.Warp    (HostPreference)
 import Yesod.Default.Config2       (applyEnvValue, configSettingsYml)
 import Yesod.Default.Util          (WidgetFileSettings, widgetFileNoReload,
                                     widgetFileReload)
+import Network.AWS.S3.Types        (BucketName(..))
 
 data AppSettings = AppSettings
     { appStaticDir              :: String
@@ -35,9 +36,10 @@ data AppSettings = AppSettings
     , appCopyright              :: Text
     , appAnalytics              :: Maybe Text
     , appAuthDummyLogin         :: Bool
+    , appSendMail               :: Bool
     , appGoogleAuthKey          :: Text
     , appGoogleAuthSecret       :: Text
-    , appBucketName             :: Text
+    , appBucketName             :: BucketName
     }
 
 instance FromJSON AppSettings where
@@ -61,12 +63,13 @@ instance FromJSON AppSettings where
         appMutableStatic          <- o .:? "mutable-static"   .!= defaultDev
         appSkipCombining          <- o .:? "skip-combining"   .!= defaultDev
 
+        appSendMail               <- o .:  "send-mail"        .!= not defaultDev
         appCopyright              <- o .:  "copyright"
         appAnalytics              <- o .:? "analytics"
         appGoogleAuthKey          <- o .: "google_auth_key"
         appGoogleAuthSecret       <- o .: "google_auth_secret"
 
-        appBucketName             <- o .:  "bucketname"
+        appBucketName             <- BucketName <$> o .:  "bucketname"
         appAuthDummyLogin         <- o .:? "auth-dummy-login"      .!= defaultDev
 
         return AppSettings {..}

@@ -9,9 +9,16 @@ import qualified Network.AWS.Data.Text as T (Text)
 import qualified Network.AWS.S3 as S3
 import           Network.AWS
 
+type AWSReq m = (MonadBaseControl IO m, MonadCatch m , MonadIO m)
 
-execAWS :: (MonadBaseControl IO m, MonadCatch m , MonadIO m)
-    => AWS a -> m a
+presignAsset :: (AWSReq m) => Text -> m Text
+presignAsset objectKey = do
+  t <- liftIO getCurrentTime
+  res <- liftIO $ S3.execAWS $ presignURL t (60*60*24) $
+    S3.getObject (S3.BucketName "duskhost") (S3.ObjectKey objectKey)
+  return $ decodeUtf8 res
+
+execAWS :: AWSReq m => AWS a -> m a
 execAWS op = do
     lgr <- newLogger Debug stdout
     env <- newEnv Discover <&> set envLogger lgr . set envRegion Oregon
@@ -31,15 +38,15 @@ getKeys bucket keyPrefix =
             map (view S3.oKey) (view S3.lorsContents rs)
 
 get :: (MonadResource m, MonadAWS m)
-    => S3.BucketName -> S3.ObjectKey -> m S3.GetObjectResponse
+    => S3.BucketName -> Text -> m S3.GetObjectResponse
 get bucket key = do
-  send (S3.getObject bucket key)
+  send (S3.getObject bucket (S3.ObjectKey key))
 --   view S3.gorsBody response `AWS.sinkBody` CC.mapM_ (liftIO . BS.putStr)
 
 put :: (ToBody a, MonadAWS m)
     => S3.BucketName
-    -> S3.ObjectKey
+    -> Text
     -> a               -- | the file contents
     -> m S3.PutObjectResponse
-put b k f =
-  send $ S3.putObject b k (toBody f)
+put b key body =
+  send $ S3.putObject b (S3.ObjectKey key) (toBody body)

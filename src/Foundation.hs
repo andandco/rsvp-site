@@ -158,7 +158,6 @@ instance Yesod App where
     defaultMessageWidget title body = $(widgetFile "default-message-widget")
 
 
--- checkAuth :: (YesodPersist m, YesodAuth m) => Maybe UserId -> DB Bool -> m (Handler AuthResult)
 checkAuth f = do
   muid <- maybeAuthId
   r <- runDB $ f muid
@@ -170,7 +169,6 @@ isLoggedIn = do
   return $ case muid of
       Nothing -> Unauthorized "You must log in to access this page"
       Just _  -> Authorized
-
 
 -- How to run database actions.
 instance YesodPersist App where

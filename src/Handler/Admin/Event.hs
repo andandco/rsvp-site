@@ -68,10 +68,8 @@ writeToServer file = do
   bucketname <- fmap (appBucketName . appSettings) getYesod
   fileContents <- runResourceT $ fileSource file $$ sinkLbs
   let fn = genFileName fileContents
-  _por <- S3.execAWS $ S3.put
-                        (BucketName bucketname)
-                        (ObjectKey fn)
-                        (fileContents)
+  _por <- S3.execAWS (
+    S3.put bucketname fn fileContents)
   return fn
   where
     genFileName lbs = "logo/upload-" <> (pack $ base64md5 lbs)

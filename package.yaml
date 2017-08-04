@@ -32,6 +32,8 @@ library:
   - Routes
   - AppType
   - Foundation
+  - Helpers.Util
+  - SendMail
   - Helpers.Forms
   - Helpers.Presentation
   - Import
@@ -96,6 +98,7 @@ library:
   - transformers
   - lens
   - uuid
+  - mime-mail
   - case-insensitive
   - wai
   when:
