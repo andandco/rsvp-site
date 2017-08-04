@@ -236,9 +236,8 @@ runDBor404 dba = do
     Just a -> return a
 
 setTitle' :: MonadWidget m => Text -> m ()
-setTitle' t = setTitle $ toHtml $ "Dusk - " <> t
+setTitle' t = setTitle $ toHtml $ t <> " - Dusk"
 
--- https://github.com/yesodweb/yesod/wiki/Sending-email
 -- https://github.com/yesodweb/yesod/wiki/Serve-static-files-from-a-separate-domain
 -- https://github.com/yesodweb/yesod/wiki/i18n-messages-in-the-scaffolding
  

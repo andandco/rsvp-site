@@ -65,10 +65,11 @@ eventFormToEvent EventForm{..} uid filename = do
 
 writeToServer :: FileInfo -> Handler Text
 writeToServer file = do
+  bucketname <- fmap (appBucketName . appSettings) getYesod
   fileContents <- runResourceT $ fileSource file $$ sinkLbs
   let fn = genFileName fileContents
   _por <- S3.execAWS $ S3.put
-                        "duskhost"
+                        (BucketName bucketname)
                         (ObjectKey fn)
                         (fileContents)
   return fn

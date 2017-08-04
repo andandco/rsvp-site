@@ -37,6 +37,7 @@ data AppSettings = AppSettings
     , appAuthDummyLogin         :: Bool
     , appGoogleAuthKey          :: Text
     , appGoogleAuthSecret       :: Text
+    , appBucketName             :: Text
     }
 
 instance FromJSON AppSettings where
@@ -65,6 +66,7 @@ instance FromJSON AppSettings where
         appGoogleAuthKey          <- o .: "google_auth_key"
         appGoogleAuthSecret       <- o .: "google_auth_secret"
 
+        appBucketName             <- o .:  "bucketname"
         appAuthDummyLogin         <- o .:? "auth-dummy-login"      .!= defaultDev
 
         return AppSettings {..}
