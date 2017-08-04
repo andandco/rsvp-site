@@ -41,6 +41,7 @@ library:
   - Model.Instances
   - Settings
   - Settings.StaticFiles
+  - S3
   - Handler.Common
   - Handler.Home
   - Handler.Profile
@@ -80,6 +81,7 @@ library:
   - monad-logger >=0.3 && <0.4
   - fast-logger >=2.2 && <2.5
   - wai-logger >=2.2 && <2.4
+  - resourcet
   - file-embed
   - bcrypt
   - safe
@@ -88,7 +90,11 @@ library:
   - containers
   - vector
   - time
+  - amazonka
+  - amazonka-s3
+  - amazonka-core
   - transformers
+  - lens
   - uuid
   - case-insensitive
   - wai

@@ -1,12 +1,16 @@
 module Handler.Admin.Event where
 
 import           Data.Conduit.Binary (sinkLbs)
-import           Data.Time.Clock as Clock
+import           Control.Monad
+import           Data.Conduit
+import           Data.Text               (Text)
+import           Data.Time
+import           Control.Monad.Trans.AWS
+import           Network.AWS.S3 hiding (Event, redirect)
 import           Yesod.Form.Bootstrap3 (BootstrapFormLayout (..), renderBootstrap3)
 
-import qualified Data.Text as T
-
 import           Import
+import qualified S3
 
 getAdminEventR :: Handler Html
 getAdminEventR = do
@@ -61,12 +65,15 @@ eventFormToEvent EventForm{..} uid filename = do
 
 writeToServer :: FileInfo -> Handler Text
 writeToServer file = do
-  filename <- runResourceT $ fileSource file $$ sinkLbs
-  let path = imageFilePath $ genFileName filename
-  liftIO $ fileMove file path
-  return $ T.pack $ genFileName filename
+  fileContents <- runResourceT $ fileSource file $$ sinkLbs
+  let fn = genFileName fileContents
+  _por <- S3.execAWS $ S3.put
+                        "duskhost"
+                        (ObjectKey fn)
+                        (fileContents)
+  return fn
   where
-    genFileName lbs = "upload-" ++ base64md5 lbs
+    genFileName lbs = "logo/upload-" <> (pack $ base64md5 lbs)
 
 data EventForm
   = EventForm
